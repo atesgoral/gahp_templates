@@ -41,15 +41,14 @@ void main() {
     //st -= vec2(.5, .5);
     st.x *= u_resolution.x / u_resolution.y;
 
-    //float aspect = u_resolution.x / u_resolution.y;
-    float zoom = 3.0 + sin(u_time) * 1.0;
+    float zoom = 3.0 + sin(u_time) * 0.2;
     
     float v = sin(xor(
-        (st.x * 1000.0 /*+ cos(u_time * 3.0) * 100.0*/) / zoom,
-        (st.y * 1000.0 /*+ sin(u_time * 2.0) * 100.0*/) / zoom)
+        (st.x * 1000.0 + u_time * 250.0) / zoom,
+        (st.y * 1000.0 + sin(u_time * 2.0) * 20.0) / zoom)
     );
 
-    //v = exp(log(v) + sin(u_time * 0.5));
+    v = exp(log(v) + sin(u_time * 0.1));
 
     gl_FragColor = v > 0.0
         ? v > 0.25
