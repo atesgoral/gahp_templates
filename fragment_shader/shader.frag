@@ -9,7 +9,7 @@ uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
 
-float random (in vec2 st) { 
+float random (in vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
 }
 
@@ -19,9 +19,9 @@ float noise(vec2 st) {
     vec2 i = floor(st);
     vec2 f = fract(st);
     vec2 u = f*f*(3.0-2.0*f);
-    return mix( mix( random( i + vec2(0.0,0.0) ), 
+    return mix( mix( random( i + vec2(0.0,0.0) ),
                      random( i + vec2(1.0,0.0) ), u.x),
-                mix( random( i + vec2(0.0,1.0) ), 
+                mix( random( i + vec2(0.0,1.0) ),
                      random( i + vec2(1.0,1.0) ), u.x), u.y);
 }
 
@@ -41,7 +41,7 @@ vec3 calculateNormal(vec3 pt) {
     return normalize(eps.xyy * distanceField(pt + eps.xyy) +
                      eps.yyx * distanceField(pt + eps.yyx) +
                      eps.yxy * distanceField(pt + eps.yxy) +
-                     eps.xxx * distanceField(pt + eps.xxx));    
+                     eps.xxx * distanceField(pt + eps.xxx));
 }
 
 vec3 c1 = vec3(255.000,229.053,192.747) / 255.0;
@@ -64,28 +64,28 @@ void main() {
     vec2 st = gl_FragCoord.xy / u_resolution.xy;
     st -= vec2(.5, .5);
     st.x *= u_resolution.x/u_resolution.y;
-    
+
     vec3 rayDirection = normalize(vec3(st, 0.) - rayOrigin + noise(st + u_time * 5.0) / 50.0);
-    
+
     float dist;
     float photonPosition = 1.;
-    
+
     for (int i = 0; i < 250; i++) {
         dist = distanceField(rayOrigin + rayDirection * photonPosition)/* + noise(st * 0.3)*/;
         photonPosition += dist *.8;
-        
+
         if (dist < 0.01) break;
     }
-    
+
     if (dist < 0.01) {
         vec3 intersection = rayOrigin + rayDirection * photonPosition;
         vec3 intersectionNormal = calculateNormal(intersection);
-        
+
         // From: http://multivis.net/lecture/phong.html
 
 		vec3 normalInterp = intersectionNormal;  // Surface normal
 		vec3 vertPos = intersection;       // Vertex position
-        
+
         vec3 N = normalize(normalInterp);
         vec3 L = normalize(lightPos - vertPos);
 
@@ -102,16 +102,11 @@ void main() {
             float specAngle = max(dot(R, V), 0.0);
             specular = pow(specAngle, shininessVal);
         }
-        
+
         gl_FragColor = vec4(Ka * ambientColor +
         	Kd * lambertian * diffuseColor +
-	        Ks * specular * specularColor, 1.0);        
- 		// float red = intersectionNormal.x * .5 + .0;
- 		// float green = intersectionNormal.y * .5 + .5;
- 		// gl_FragColor = vec4(vec3(red, green, .5), 1.0);
-        //vec3 rgb = mix(c3 / 255.0, mix(c1 / 255.0, c2 / 255.0, intersectionNormal.x), intersectionNormal.y);
- 		//gl_FragColor = vec4(rgb, 1.0);       
+	        Ks * specular * specularColor, 1.0);
     } else {
- 		gl_FragColor = vec4(vec3(0) / 255.0, 1.0);       
+ 		gl_FragColor = vec4(vec3(0) / 255.0, 1.0);
     }
 }
