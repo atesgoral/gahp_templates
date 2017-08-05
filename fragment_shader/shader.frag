@@ -31,17 +31,35 @@ float xor(float a, float b) {
         + xorBit(a, b, 12.0);
 }
 
+vec3 c1 = vec3(97.0, 90.0, 69.0);
+vec3 c2 = vec3(255.0, 11.0, 120.0);
+vec3 c3 = vec3(157.0, 4.0, 83.0);
+vec3 c4 = vec3(160.0, 159.0, 116.0);
+
 void main() {
     vec2 st = gl_FragCoord.xy / u_resolution.xy;
-    st -= vec2(.5, .5);
-    st.x *= u_resolution.x/u_resolution.y;
+    //st -= vec2(.5, .5);
+    st.x *= u_resolution.x / u_resolution.y;
 
-    float zoom = 4.0 + sin(u_time) * 3.0;
+    //float aspect = u_resolution.x / u_resolution.y;
+    float zoom = 3.0 + sin(u_time) * 1.0;
     
-    gl_FragColor = sin(xor(
-        (gl_FragCoord.x + cos(u_time * 3.0) * 100.0) / zoom,
-        (gl_FragCoord.y + sin(u_time * 2.0) * 100.0) / zoom)
-    ) > 0.0
-        ? vec4(1.0)
-        : vec4(0.0);
-}
+    float v = sin(xor(
+        (st.x * 1000.0 /*+ cos(u_time * 3.0) * 100.0*/) / zoom,
+        (st.y * 1000.0 /*+ sin(u_time * 2.0) * 100.0*/) / zoom)
+    );
+
+    //v = exp(log(v) + sin(u_time * 0.5));
+
+    gl_FragColor = v > 0.0
+        ? v > 0.25
+            ? v > 0.5
+                ? v > 0.75
+                    ? vec4(c1 / 255.0, 1.0)
+                    : vec4(c2 / 255.0, 1.0)
+                : vec4(c3 / 255.0, 1.0)
+            : vec4(c4 / 255.0, 1.0)
+        : vec4(vec3(0.0), 1.0);
+
+    gl_FragColor = vec4(vec3(mod(st.x * 100.0, 1.0), mod(st.y * 100.0, 1.0), 0.0), 1.0);
+}            
