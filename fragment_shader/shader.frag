@@ -60,6 +60,4 @@ void main() {
                 : vec4(c3 / 255.0, 1.0)
             : vec4(c4 / 255.0, 1.0)
         : vec4(vec3(0.0), 1.0);
-
-    gl_FragColor = vec4(vec3(mod(st.x * 100.0, 1.0), mod(st.y * 100.0, 1.0), 0.0), 1.0);
 }            
